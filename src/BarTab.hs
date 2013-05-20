@@ -8,7 +8,7 @@ import Data.IORef
 import Data.Maybe
 
 import Paths
-
+import qualified Data.List as L (drop)
 #ifdef CABAL
 import "threepenny-gui" Graphics.UI.Threepenny
 #else
@@ -52,6 +52,14 @@ setup w = do
             writeIORef inputs $ elInput : is
             redoLayout
         
+        mkRemove :: IO ()
+        mkRemove = do
+            is      <- readIORef inputs
+            let n = L.drop 1 is
+            writeIORef inputs $ n
+            redoLayout
+            displayTotal
+
         redoLayout :: IO ()
         redoLayout = do
             layout <- mkLayout =<< readIORef inputs
@@ -69,6 +77,7 @@ setup w = do
         
     on click elAdd $ \_ -> mkInput
     mkInput
+    on click elRemove $ \_ -> mkRemove
 
 
 {-----------------------------------------------------------------------------
